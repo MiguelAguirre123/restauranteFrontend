@@ -1,4 +1,5 @@
 import React, { useEffect, useState }  from 'react';
+import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import {
   CButton,
@@ -8,11 +9,12 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Restaurant = () => {
 
   const [restaurantData, setRestaurantData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(()=>{
     const getRestaurants = async() =>{
@@ -27,7 +29,22 @@ const Restaurant = () => {
   },[]);
 
   function handleCreateRestaurant(event){
+    navigate('/restaurants/restaurantform');
+  }
 
+  function handleEditRestaurant(restaurantId){
+    navigate(`/restaurants/restauranteditform/${restaurantId}`)
+  }
+
+  const handleDisableRestaurant = async(restaurantId) => {
+    try{
+      var url = "http://localhost:1337/api/disablerestaurant/"+restaurantId;
+      const response = await Axios.put(url);
+      window.location.reload();
+    }
+    catch(e){
+      console.log(e)
+    }
   }
 
   const columns = [
@@ -55,7 +72,8 @@ const Restaurant = () => {
       title: 'Options',
       render: (text, record) => (
         <div>
-
+          <CButton onClick={() => handleEditRestaurant(record.restaurantId)}>Edit</CButton>
+          <CButton onClick={() => handleDisableRestaurant(record.restaurantId)}>Delete</CButton>
         </div>
       )
     }
@@ -63,7 +81,7 @@ const Restaurant = () => {
 
   return (
     <div>
-      <CButton onClick={handleCreateRestaurant}> New Restaurant </CButton>
+      <CButton onClick={handleCreateRestaurant}>New Restaurant</CButton>
       <CTable>
         <CTableHead>
           <CTableRow>
@@ -76,7 +94,9 @@ const Restaurant = () => {
           {restaurantData.map((restaurant, index) => (
             <CTableRow key={index}>
               {columns.map((column, columnIndex) => (
-                <CTableDataCell key={columnIndex}> {restaurant[column.dataIndex]} </CTableDataCell>
+                <CTableDataCell key={columnIndex}>
+                  {column.render ? column.render(restaurant[column.dataIndex], restaurant) : restaurant[column.dataIndex]}
+                </CTableDataCell>
               ))}
             </CTableRow>
           ))}
