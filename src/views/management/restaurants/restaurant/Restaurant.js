@@ -1,5 +1,6 @@
-import React, { useEffect, useState }  from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';   
+import CIcon from '@coreui/icons-react';
 import Axios from 'axios';
 import {
   CButton,
@@ -10,6 +11,10 @@ import {
   CTableHeaderCell,
   CTableDataCell
 } from '@coreui/react';
+import {
+  cilPencil,
+  cilTrash
+} from '@coreui/icons'
 
 const Restaurant = () => {
 
@@ -72,8 +77,8 @@ const Restaurant = () => {
       title: 'Options',
       render: (text, record) => (
         <div>
-          <CButton onClick={() => handleEditRestaurant(record.restaurantId)}>Edit</CButton>
-          <CButton onClick={() => handleDisableRestaurant(record.restaurantId)}>Delete</CButton>
+          <CButton onClick={() => handleEditRestaurant(record.restaurantId)}><CIcon icon={cilPencil}/></CButton>
+          <CButton onClick={() => handleDisableRestaurant(record.restaurantId)}><CIcon icon={cilTrash}/></CButton>
         </div>
       )
     }
